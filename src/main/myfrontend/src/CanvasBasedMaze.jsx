@@ -1,39 +1,116 @@
 import React, { useEffect, useRef, useState } from 'react'
 import mazeData from "./MazeArrayData"
 import MazeCreateer from './CreateMaze'
+import SockJS from "sockjs-client"
+import Stomp from "stomp-websocket"
 import Player from './PlayerClass'
 import CollisionHandler from './CollisionsHandler'
 import FinishPoint from "./FinishPoint"
 import "./App.css"
+import { useServerConnection } from "./useServerConnection.jsx"
+
 
 export default function CanvasBasedMaze(props) {
-  const serverMazeData = JSON.parse(props.MazeData)
-  const isSecond = props.secondCanvas
+  
+  const [mazeData, oppID, myID, sendMove, playerValues, sendFinishPoint, finishValues, posSub, oppUsername, winnerFunc, winnerText, resetServer] = useServerConnection(props.username)
+  
   const [sceneWidth, setSceneWidth] = useState(0)
   const [sceneHeight, setSceneHeight] = useState(0)
   const [player, setPlayer] = useState(null)
+  const [opp, setOpp] = useState(null)
   const [endPoint, setEndPoint] = useState(null)
+  const [oppEndPoint, setOppEndPoint] = useState(null)
   const [myMaze, setMyMaze] = useState(null)
+  const [oppMaze, setOppMaze] = useState(null)
   const [collisionHandler, setCollisionHandler] = useState(null)
+  const [gameOver, setGameOver] = useState(false)
   var playerSpeed = 4;
   var keyPressed = []
   const scene = useRef()
 
   useEffect(() => {
-    const cw = document.body.clientWidth / 2
+    if(endPoint != null && posSub != null) {
+      endPoint.drawFinishPoint()
+      var screen = Math.min(sceneWidth / 2, sceneHeight);
+      var finishX = Math.floor(endPoint.getX()) / screen;
+      var finishY = Math.floor(endPoint.getY()) / screen;
+      sendFinishPoint(finishX, finishY)
+    }
+  }, [endPoint, posSub])
+
+  useEffect(() => {
+    if(winnerText != null) {
+      setGameOver(true)
+      //game over display winner text
+    }
+  }, [winnerText])
+  
+  useEffect(() => {
+    if(myMaze != null) {
+      myMaze.createMaze()
+    }
+  }, [myMaze])
+
+  useEffect(() => {
+    if(oppMaze != null) {
+      oppMaze.createMaze()
+    }
+  }, [oppMaze])
+  
+  useEffect(() => {
+    const cw = document.body.clientWidth
     const ch = document.body.clientHeight
-    setSceneWidth(cw)
     setSceneHeight(ch)
-    gameLoop(cw, ch)
+    setSceneWidth(cw)
+        
+    if(mazeData != null) {
+      gameLoop(cw, ch)
+    }
+  }, [mazeData])
 
-    return () => {
-      //Close any running proccesses
-    };
-  }, [])
+  useEffect(() => {
+    if(playerValues != null) {
+      setPlayPosition(playerValues[0], playerValues[1])
+    }
+  }, [playerValues])
 
+  useEffect(() => {
+    console.log(finishValues)
+    if(finishValues != null) {
+      setOppFinish(finishValues[0], finishValues[1])
+    }
+  }, [finishValues])
+  
+  const setOppFinish = (x, y) => {
+    console.log(oppEndPoint)
+    if(oppEndPoint != null) {
+      var screen = Math.min(sceneWidth / 2, sceneHeight);
+      var leftMargin = Math.floor(sceneWidth / 2);
+      oppEndPoint.setX(Math.floor(x*screen) + leftMargin)
+      oppEndPoint.setY(Math.floor(y*screen))
+      oppEndPoint.drawFinishPoint()
+    }
+  }
+  
+  const setPlayPosition = (x, y) => {
+    if(opp != null) {
+      var screen = Math.min(sceneWidth / 2, sceneHeight);
+      var leftMargin = Math.floor(sceneWidth / 2);
+      opp.setPlayerX(Math.floor((x * screen) + leftMargin))
+      opp.setPlayerY(Math.floor((y * screen)))
+      opp.clearPlayerSurroundings()
+      opp.drawPlayer()
+      if(oppMaze != null) {
+        oppMaze.createMaze()
+      }
+    }
+  }
+  
   window.onkeydown = function(e) {
+    if(gameOver) return;
+    
     keyPressed[e.key] = true;
-
+    
     if (keyPressed['a'] || keyPressed['A']) {
       player.movePlayerX(playerSpeed, -1)
       collisionMazeReset()
@@ -53,17 +130,31 @@ export default function CanvasBasedMaze(props) {
   }
 
   window.onkeyup = function(e) {
+    if(gameOver) return;
     delete keyPressed[e.key];
   }
 
   const collisionMazeReset = () => {
     if (myMaze != null) {
-      if (collisionHandler != null && player != null) {
+      if (collisionHandler != null && player != null && endPoint != null) {
         handleCollision(collisionHandler.checkForCollision(player.playerX(), player.playerY(), player.playerWidth(), player.playerHeight()))
       }
-      myMaze.createMaze(sceneWidth, sceneHeight)
+      myMaze.createMaze()
       endPoint.drawFinishPoint()
-      console.log(endPoint.checkForCompletion(player))
+      var screen = Math.min(sceneWidth / 2, sceneHeight);
+      var xPos = Math.floor(player.playerX()) / screen;
+      var yPos = Math.floor(player.playerY()) / screen;
+      sendMove(xPos, yPos);  
+      if(endPoint.checkForCompletion(player)) {
+        console.log("winner")
+        winnerFunc()      
+      }
+    }
+    if(oppMaze != null) {
+      oppMaze.createMaze()
+      if(oppEndPoint != null) {
+        oppEndPoint.drawFinishPoint()
+      }
     }
   }
 
@@ -87,10 +178,10 @@ export default function CanvasBasedMaze(props) {
     }
   }
 
-  const gameLoop = (cw, ch) => {
-    const sceneContext = scene.current.getContext("2d")
-    const newCW = Math.ceil(Math.min(cw, ch) / 60)
-    const maze = new MazeCreateer(sceneContext, serverMazeData, cw, ch, isSecond)
+  const setClientPlayer = (cw, ch, sceneContext) => {
+    const newCW = Math.ceil(Math.min(cw / 2, ch) / 35)
+    const screen = Math.min(cw / 2, ch);
+    const maze = new MazeCreateer(sceneContext, JSON.parse(mazeData), cw, ch, false)
     setMyMaze(maze)
     var playerCoords = maze.createMaze() 
     var finishCoords = maze.createMaze()
@@ -99,9 +190,61 @@ export default function CanvasBasedMaze(props) {
     setCollisionHandler(new CollisionHandler(maze.addAllMazeNodes()))
   }
 
+  const setOppPlayer = (cw, ch, sceneContext) => {
+    const newCW = Math.ceil(Math.min(cw / 2, ch) / 35)
+    const maze = new MazeCreateer(sceneContext, JSON.parse(mazeData), cw, ch, true)
+    setOppMaze(maze)
+    setOpp(new Player(-100, -100, newCW / 2, newCW / 2, sceneContext, "#00ff44"))
+    setOppEndPoint(new FinishPoint(0, 0, newCW / 2, newCW / 2, "#800000", sceneContext))
+  }
+  
+  const gameLoop = (cw, ch) => {
+    const sceneContext = scene.current.getContext("2d")
+    setClientPlayer(cw, ch, sceneContext)
+    setOppPlayer(cw, ch, sceneContext)
+  }
+
+  const restartGame = () => {
+    setPlayer(null)
+    setOpp(null)
+    setEndPoint(null)
+    setOppEndPoint(null)
+    setMyMaze(null)
+    setOppMaze(null)
+    setCollisionHandler(null)
+    setGameOver(false)
+    resetServer()
+  }
+  
   return (<div className="divOfCanvas" style={{ height: "100vh" }}>
-    <canvas ref={scene} width={sceneWidth * 2} height={sceneHeight} className="canvasDiv" />
+    {
+    mazeData != null ? <div>
+        <div>
+          <div>
+            <h1 className="usernameLbl">{props.username}</h1>
+            <h1 className="oppUsernameLbl">{oppUsername}</h1>
+          </div>
+          <canvas ref={scene} width={sceneWidth } height={sceneHeight}         className="canvasDiv" /> 
+        </div> 
+        {
+          gameOver &&
+          <div>
+            <h1 className="winnerTxt">{winnerText}</h1>
+            <button className="restartBtn" onClick={restartGame}>find match</button>
+            {
+              //game over screen here
+            }
+          </div>
+        }
+      </div> 
+      : 
+      <div class="loading-container">
+        <div class="loading"></div>
+        <div id="loading-text">searching</div>
+      </div>
+    }
   </div>)
 }
+
 
 

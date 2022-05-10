@@ -15,9 +15,9 @@ export default class MazeCreater {
   //fills the mazeNodes array with all the solid maze nodes
   //returns all maze nodes
   addAllMazeNodes() {
-    const Scale = 60;
-    const LeftMargin = Math.floor(this.cw / 8) + this.isSecond ? Math.floor(this.cw / 2): 0;
-    var widthRatio = Math.min(this.cw, this.ch);
+    const Scale = 35;
+    const LeftMargin = this.isSecond ? Math.floor(this.cw / 2) : 0;
+    var widthRatio = Math.min(this.cw / 2, this.ch);
     var currentColumn = 0;
     this.scene.fillStyle = "#000000"
     var width = Math.ceil(widthRatio / Scale);
@@ -41,17 +41,16 @@ export default class MazeCreater {
   //Draws maze onto canvas
   //(TODO allow customization of colors as param)
   createMaze() {
-    var randomColumn = Math.floor(Math.random() * 40) + 5;
-    var randomRow = Math.floor(Math.random() * 40) + 5;
+    var randomColumn = Math.floor(Math.random() * 10) + 5;
+    var randomRow = Math.floor(Math.random() * 10) + 5;
     var spawnPoint = []
-    const Scale = 60;
-    const LeftMargin = Math.floor(this.cw / 8) + this.isSecond ? Math.floor(this.cw / 2): 0;
-    var widthRatio = Math.min(this.cw, this.ch);
+    const Scale = 35;
+    const LeftMargin = this.isSecond ? Math.floor(this.cw / 2) : 0;
+    var widthRatio = Math.min(this.cw / 2, this.ch);
     var currentColumn = 0;
     this.scene.fillStyle = "#000000"
     var width = Math.ceil(widthRatio / Scale);
     var height = Math.ceil(widthRatio / Scale);
-    console.log(this.mazeData)
     this.mazeData.forEach(row => {
       currentColumn++;
       var currentRow = 0;

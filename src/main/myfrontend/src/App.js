@@ -1,39 +1,37 @@
 import react, {useEffect, useState} from "react"
 import logo from './logo.svg';
-import SockJS from "sockjs-client"
-import Stomp from "stomp-websocket"
 import CanvasBaseMaze from "./CanvasBasedMaze"
 import './App.css';
 
 function App() {
+  const [username, setUsername] = useState("");
+  const [switchToMaze, setSwitchToMaze] = useState(false);
 
-  var stompClient = null; 
-  const [mazeData, setMazeData] = useState(null)
-  
-  useEffect(() => {
-  
-    var socket = new SockJS('/websocket');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-      console.log("woah I actually connected")
-      console.log('Connected: ' + frame);
-      stompClient.subscribe('/topic/maze', function (greeting) {
-        console.log("This greeting bs stuff: " + greeting)
-        console.log(JSON.parse(greeting.body).content);
-        setMazeData(JSON.parse(greeting.body).content);
-      });
-      stompClient.send("/app/getMaze",{},JSON.stringify({}));
-    })
-  }, [])
+  const findMatchBtnClicked = (e) => {
+    if(username != "") {
+      setSwitchToMaze(true)
+    }
+  }
+
+  const restartGameLoop = () => {
+    setSwitchToMaze(false)
+  }
   
   return (
-    <div>
-    {mazeData != null ?  <div> 
-     <CanvasBaseMaze MazeData={mazeData} secondCanvas={false}/>
-     <CanvasBaseMaze MazeData={mazeData} secondCanvas={true}/>
-     </div>
-       :
-     <div /> }
+    <div className="mainDiv">
+      {switchToMaze? 
+        <CanvasBaseMaze username={username} />
+        :
+      <div className="inputContainer">
+        <div className="inputDiv">
+          <input className="usernamInput" type="username" placeholder="username" value={username} 
+            onChange={(username) => setUsername(username.target.value)}             />
+        </div>
+        <button className="findMatchButton" onClick={findMatchBtnClicked}>
+          Find Match
+        </button>
+      </div>
+      }   
     </div>
   );
 }

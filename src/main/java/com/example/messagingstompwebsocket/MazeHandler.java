@@ -2,7 +2,7 @@ package com.example.messagingstompwebsocket;
 import java.util.Arrays;
 
 class MazeHandler {
-  static final  int mazeSize = 50;
+  static final  int mazeSize = 20;
 
   public MazeHandler() {
     

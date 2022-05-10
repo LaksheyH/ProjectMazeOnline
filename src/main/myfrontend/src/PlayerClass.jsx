@@ -44,6 +44,10 @@ export default class Player {
     this.x = val
   }
 
+  clearPlayerSurroundings() {
+    this.canvas.clearRect(this.x-20, this.y-20, this.width+40, this.height+40);
+  }
+  
   //set player y position
   //@params val y value to set player as
   setPlayerY(val) {
