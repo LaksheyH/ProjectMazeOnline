@@ -5,6 +5,7 @@ import SockJS from "sockjs-client"
 import Stomp from "stomp-websocket"
 import Player from './PlayerClass'
 import CollisionHandler from './CollisionsHandler'
+import CalculateFinishPoint from './calculateFinishPoint'
 import FinishPoint from "./FinishPoint"
 import "./App.css"
 import { useServerConnection } from "./useServerConnection.jsx"
@@ -12,11 +13,12 @@ import { useServerConnection } from "./useServerConnection.jsx"
 
 export default function CanvasBasedMaze(props) {
   
-  const [mazeData, oppID, myID, sendMove, playerValues, sendFinishPoint, finishValues, posSub, oppUsername, winnerFunc, winnerText, resetServer] = useServerConnection(props.username)
+  const [mazeData, oppID, myID, sendMove, playerValues, sendFinishPoint, finishValues, posSub, oppUsername, winnerFunc, winnerText, resetServer, getEndPoints, newEndPoints] = useServerConnection(props.username)
   
   const [sceneWidth, setSceneWidth] = useState(0)
   const [sceneHeight, setSceneHeight] = useState(0)
   const [player, setPlayer] = useState(null)
+  const [spawnPointArray, setSpawnPointArray] = useState(null)
   const [opp, setOpp] = useState(null)
   const [endPoint, setEndPoint] = useState(null)
   const [oppEndPoint, setOppEndPoint] = useState(null)
@@ -52,10 +54,24 @@ export default function CanvasBasedMaze(props) {
   }, [myMaze])
 
   useEffect(() => {
+    if(myID != null && spawnPointArray != null) {
+      getEndPoints(spawnPointArray[0], spawnPointArray[1])
+    }
+  }, myID, spawnPointArray)
+  
+  useEffect(() => {
     if(oppMaze != null) {
       oppMaze.createMaze()
     }
   }, [oppMaze])
+
+  useEffect(() => {
+    if(newEndPoints != null) {
+      const newCW = Math.ceil(Math.min(sceneWidth / 2, sceneHeight) / 35)
+      const sceneContext = scene.current.getContext("2d")
+      setEndPoint(new FinishPoint(newEndPoints[0] + newCW / 4, newEndPoints[1] + newCW / 4, newCW / 2, newCW / 2, "#00ffff", sceneContext))
+    }
+  }, [newEndPoints, sceneWidth, sceneHeight])
   
   useEffect(() => {
     const cw = document.body.clientWidth
@@ -184,9 +200,9 @@ export default function CanvasBasedMaze(props) {
     const maze = new MazeCreateer(sceneContext, JSON.parse(mazeData), cw, ch, false)
     setMyMaze(maze)
     var playerCoords = maze.createMaze() 
-    var finishCoords = maze.createMaze()
+    var finishCalc = new CalculateFinishPoint(playerCoords[3], playerCoords[2], JSON.parse(mazeData))
+    //setSpawnPointArray([playerCoords[2], playerCoords[3]])
     setPlayer(new Player(playerCoords[0] + newCW / 4, playerCoords[1] + newCW / 4, newCW / 2, newCW / 2, sceneContext, "#00ff00"))
-    setEndPoint(new FinishPoint(finishCoords[0] + newCW / 4, finishCoords[1] + newCW / 4, newCW / 2, newCW / 2, "#00ffff", sceneContext))
     setCollisionHandler(new CollisionHandler(maze.addAllMazeNodes()))
   }
 

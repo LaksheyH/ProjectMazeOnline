@@ -14,6 +14,7 @@ export function useServerConnection(username) {
   const [mazeData, setMazeData] = useState(null);
   const [positionSub, setPositionSub] = useState(null);
   const [winnerText, setWinnerText] = useState(null);
+  const [endPoints, setEndPoints] = useState(null);
   var sub1 = null;
   var sub2 = null;
   var sub3 = null;
@@ -119,6 +120,10 @@ export function useServerConnection(username) {
       setFinishValues([payLoadData.x, payLoadData.y])
     } else if(payLoadData.status == "won") {
       setWinnerText(payLoadData.message);
+    } else if(payLoadData.status == "endPoint") {
+      var tempX = payLoadData.x
+      var tempY = payLoadData.y
+      setEndPoints([tempX, tempY])
     }
   } 
 
@@ -171,6 +176,19 @@ export function useServerConnection(username) {
     sub3 = null;
     onConnected()
   }
+
+  const getMyEndPoint = (x, y) => {
+    console.log(cID)
+    let obj = {
+      recieverName: cID+"",
+      name: cID+"",
+      message: mazeData,
+      x: x,
+      y: y,
+      status: "getEnd"
+    }
+    stompClient.send('/app/private-message',{},JSON.stringify(obj))
+  }
   
-  return [mazeData, oID, cID, sendMove, playerValues, sendFinish, finishValues, positionSub, oppUsername, sendWon, winnerText, resetNetValues];
+  return [mazeData, oID, cID, sendMove, playerValues, sendFinish, finishValues, positionSub, oppUsername, sendWon, winnerText, resetNetValues, getMyEndPoint, endPoints];
 }

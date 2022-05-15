@@ -75,6 +75,41 @@ public class GreetingController {
     } else if (msg.getStatus().equals("won")) {
       simpMessagingTemplate.convertAndSendToUser(msg.getRecieverName(), "/position", msg);
       theMsg = msg;
+    } else if (msg.getStatus().equals("getEnd")) {
+      String mazeData = msg.getMessage();
+      int x = (int)msg.getX();
+      int y = (int)msg.getY();
+      //Convertfrom string to 2d array
+      String s = mazeData;
+      s = s.replace("[","");//replacing all [ to ""
+      s = s.substring(0,s.length()-2);//ignoring last two ]]
+      String s1[] = s.split("],");//separating all by "],"
+
+      int my_matrics[][] = new int[s1.length][s1.length];//declaring two dimensional matrix for input
+
+      for(int i = 0; i < s1.length; i++){
+        s1[i] = s1[i].trim();//ignoring all extra space if the string s1[i] has
+        String single_int[] = s1[i].split(", ");//separating integers by ", "
+
+        for(int j = 0; j < single_int.length; j++){
+          my_matrics[i][j] = Integer.parseInt(single_int[j]);//adding single values
+        }
+      }
+      
+      FinishPointAlgo finishPoint = new FinishPointAlgo(x, y, my_matrics);
+
+      int[] finishes = finishPoint.CalculateFinishPoint(10);
+      if(finishes[0] == -1) {
+        System.out.println("we have a problem shit");
+      }
+      HelloMessage newMsg = new HelloMessage();
+      newMsg.setStatus("endPoint");
+      newMsg.setX(finishes[0]);
+      newMsg.setY(finishes[1]);
+      //System.out.println(newMsg.getMessage());
+      theMsg = newMsg;
+      simpMessagingTemplate.convertAndSendToUser(msg.getRecieverName(), "/position", newMsg);
+      
     } else {
       simpMessagingTemplate.convertAndSendToUser(msg.getRecieverName(), "/private", msg); // /user/david/private
       theMsg = msg;

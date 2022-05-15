@@ -65,7 +65,7 @@ export default class MazeCreater {
           this.scene.fillRect(x, y, width, height)
         } else {
           if(currentColumn == randomColumn && currentRow == randomRow) {
-            spawnPoint = [x,y]
+            spawnPoint = [x,y, randomColumn, randomRow]
           }
         }
       })
