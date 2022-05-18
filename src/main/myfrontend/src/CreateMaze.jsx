@@ -42,8 +42,8 @@ export default class MazeCreater {
   createMaze() {
     var randomColumn = Math.floor(Math.random() * 5) + 2;
     var randomRow = Math.floor(Math.random() * 5) + 1;
-    var finishRandomColumn = Math.floor(Math.random() * 5) + 15;
-    var finishRandomRow = Math.floor(Math.random() * 5) + 15;
+    var finishRandomColumn = Math.floor(Math.random() * 5) + 14;
+    var finishRandomRow = Math.floor(Math.random() * 5) + 14;
     var spawnPoint = []
     var finishPoint = []
     const Scale = 35;

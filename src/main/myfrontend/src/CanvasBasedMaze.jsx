@@ -20,6 +20,7 @@ export default function CanvasBasedMaze(props) {
   const [player, setPlayer] = useState(null)
   //const [spawnPointArray, setSpawnPointArray] = useState(null)
   const [opp, setOpp] = useState(null)
+  const [oppGhost, setOppGhost] = useState(null)
   const [endPoint, setEndPoint] = useState(null)
   const [oppEndPoint, setOppEndPoint] = useState(null)
   const [myMaze, setMyMaze] = useState(null)
@@ -121,10 +122,19 @@ export default function CanvasBasedMaze(props) {
       var leftMargin = Math.floor(sceneWidth / 2);
       opp.setPlayerX(Math.floor((x * screen) + leftMargin))
       opp.setPlayerY(Math.floor((y * screen)))
+      oppGhost.setPlayerX(Math.floor((x * screen)))
+      oppGhost.setPlayerY(Math.floor((y * screen)))
+      oppGhost.clearPlayerSurroundings()
+      player.clearPlayerSurroundings()
       opp.clearPlayerSurroundings()
+      oppGhost.drawPlayer()
       opp.drawPlayer()
+      player.drawPlayer()
       if (oppMaze != null) {
         oppMaze.createMaze()
+      }
+      if(myMaze != null) {
+        myMaze.createMaze()
       }
     }
   }
@@ -222,7 +232,8 @@ export default function CanvasBasedMaze(props) {
     //const maze = new MazeCreateer(sceneContext, mazeData, cw, ch, true)
     setOppMaze(maze)
     setOpp(new Player(-100, -100, newCW / 2, newCW / 2, sceneContext, "#00ff44"))
-    setOppEndPoint(new FinishPoint(0, 0, newCW / 2, newCW / 2, "#800000", sceneContext))
+    setOppGhost(new Player(-100, -100, newCW / 2, newCW / 2, sceneContext, "#00ff4450"))
+    setOppEndPoint(new FinishPoint(-100, -100, newCW / 2, newCW / 2, "#800000", sceneContext))
   }
 
   const gameLoop = (cw, ch) => {
@@ -248,10 +259,10 @@ export default function CanvasBasedMaze(props) {
       mazeData != null ? <div>
         <div>
           <div>
-            {/* <h1 className="usernameLbl">{props.username}</h1>
-            <h1 className="oppUsernameLbl">{oppUsername}</h1> */}
-            <h1 className="usernameLbl">Player 1</h1>
-            <h1 className="oppUsernameLbl">Player 2</h1>
+           <h1 className="usernameLbl">{props.username}</h1>
+            <h1 className="oppUsernameLbl">{oppUsername}</h1>
+            { /*<h1 className="usernameLbl">Player 1</h1>
+            <h1 className="oppUsernameLbl">Player 2</h1>*/ }
           </div>
           <div className='mainDivider' />
           <canvas ref={scene} width={sceneWidth} height={sceneHeight} className="canvasDiv" />
@@ -260,7 +271,7 @@ export default function CanvasBasedMaze(props) {
           gameOver &&
           <div>
             <h1 className="winnerTxt">{winnerText}</h1>
-            <button className="restartBtn" onClick={restartGame}>find match</button>
+            <button className="findMatchButton" onClick={restartGame}>find match</button>
             {
               //game over screen here
             }
