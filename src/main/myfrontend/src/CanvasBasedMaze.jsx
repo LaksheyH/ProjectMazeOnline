@@ -68,7 +68,7 @@ export default function CanvasBasedMaze(props) {
   }, [oppMaze])
 
   useEffect(() => {
-    if(endPoint != null) {
+    if (endPoint != null) {
       endPoint.drawFinishPoint();
     }
   }, [endPoint])
@@ -133,7 +133,7 @@ export default function CanvasBasedMaze(props) {
       if (oppMaze != null) {
         oppMaze.createMaze()
       }
-      if(myMaze != null) {
+      if (myMaze != null) {
         myMaze.createMaze()
       }
     }
@@ -254,27 +254,36 @@ export default function CanvasBasedMaze(props) {
     resetServer()
   }
 
+  const changeUsername = () => {
+    restartGame()
+    props.resetUsername()
+  }
+
   return (<div className="divOfCanvas" style={{ height: "100vh" }}>
     {
       mazeData != null ? <div>
-        <div>
+        <div className='mazeGame'>
           <div>
-           <h1 className="usernameLbl">{props.username}</h1>
+            <h1 className="usernameLbl">{props.username}</h1>
             <h1 className="oppUsernameLbl">{oppUsername}</h1>
             { /*<h1 className="usernameLbl">Player 1</h1>
             <h1 className="oppUsernameLbl">Player 2</h1>*/ }
           </div>
           <div className='mainDivider' />
+          <div>
           <canvas ref={scene} width={sceneWidth} height={sceneHeight} className="canvasDiv" />
+          </div>
         </div>
         {
           gameOver &&
-          <div>
-            <h1 className="winnerTxt">{winnerText}</h1>
-            <button className="findMatchButton" onClick={restartGame}>find match</button>
-            {
-              //game over screen here
-            }
+          <div className='gameOverDivContainer'>
+            {/* <h1 className="winnerTxt">{winnerText}</h1> */}
+            <div className='gameOverDiv'></div>
+            <div className='gameResultsAndPlayAgain'>
+              <button className="findNewMatchBtn" onClick={restartGame}>Find New Match</button>
+              <button className="changeUserNameBtn" onClick={changeUsername}>Change Username</button>
+              <h1 className="winnerTxt">{winnerText}</h1>
+            </div>
           </div>
         }
       </div>

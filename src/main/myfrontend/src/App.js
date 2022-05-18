@@ -20,7 +20,7 @@ function App() {
   return (
     <div className="mainDiv">
       {switchToMaze? 
-        <CanvasBaseMaze username={username} />
+        <CanvasBaseMaze username={username} resetUsername={restartGameLoop}/>
         :
       <div className="inputContainer">
         <div className="inputDiv">

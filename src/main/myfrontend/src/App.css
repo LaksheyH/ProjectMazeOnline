@@ -67,6 +67,7 @@ body {
 
 .canvasDiv {
   position: absolute;
+  z-index: 0;
 }
 
 .searchingText {
@@ -76,6 +77,38 @@ body {
   text-align: center;
   top: 5vh;
   width: 100vw;
+}
+
+.findNewMatchBtn {
+  margin-left: 45vw;
+  margin-top: 48vh;
+  position: absolute;
+  z-index: 100;
+  width: 10vw;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 200;
+  font-family: 'Courier New', Courier, monospace;
+  color: white;
+  background-color: #272635;
+  height: 35px;
+  box-shadow: 3px 3px 5px #27263550;
+}
+
+.changeUserNameBtn {
+  margin-left: 45vw;
+  margin-top: 56vh;
+  position: absolute;
+  z-index: 100;
+  width: 10vw;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 200;
+  font-family: 'Courier New', Courier, monospace;
+  color: white;
+  background-color: #272635;
+  height: 35px;
+  box-shadow: 3px 3px 5px #27263550;
 }
 
 .findMatchButton {
@@ -92,7 +125,43 @@ body {
   box-shadow: 3px 3px 5px #27263550;
 }
 
+.gameOverDiv {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(128, 128, 128, 0.336);
+  filter: blur(2px);
+}
+
+.mazeGame {
+  z-index: 0;
+}
+
+.gameResultsAndPlayAgain {
+  z-index: 100;
+  height: 100vh;
+  width: 100vw;
+}
+
+.gameOverDivContainer {
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+}
+
 .findMatchButton:hover {
+  cursor: pointer;
+  box-shadow: 3px 3px 5px #272635cc;
+}
+
+.findNewMatchBtn:hover {
+  cursor: pointer;
+  box-shadow: 3px 3px 5px #272635cc;
+}
+
+.changeUserNameBtn:hover {
   cursor: pointer;
   box-shadow: 3px 3px 5px #272635cc;
 }
@@ -106,9 +175,12 @@ body {
 }
 
 .winnerTxt {
+  font-family: 'Courier New', Courier, monospace;
+  width: 100vw;
+  text-align: center;
+  font-size: 3rem;
   position: absolute;
-  left: 45vw;
-  top: 45vh;
+  top: 30vh;
 }
 
 .oppUsernameLbl {
