@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SockJS from "sockjs-client"
 import Stomp from "stomp-websocket"
+import data from "./MazeArrayData"
 
 export function useServerConnection(username) {
   const [stompClient, setStompClient] = useState(null);
@@ -20,6 +21,7 @@ export function useServerConnection(username) {
   var sub3 = null;
   
   useEffect(() => {
+    //setMazeData(data);
     var socket = new SockJS('/websocket');
     setStompClient(Stomp.over(socket));
   }, []);
@@ -187,7 +189,8 @@ export function useServerConnection(username) {
       y: y,
       status: "getEnd"
     }
-    stompClient.send('/app/private-message',{},JSON.stringify(obj))
+    console.log("calling get end when it should'nt throw error in future")
+    //stompClient.send('/app/private-message',{},JSON.stringify(obj))
   }
   
   return [mazeData, oID, cID, sendMove, playerValues, sendFinish, finishValues, positionSub, oppUsername, sendWon, winnerText, resetNetValues, getMyEndPoint, endPoints];

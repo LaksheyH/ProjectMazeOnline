@@ -4,6 +4,7 @@
 
 body {
   overflow: hidden; /* Hide scrollbars */
+  background-color: #DAFFEF;
 }
 
 .App-logo {
@@ -24,7 +25,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-sizeu: calc(10px + 2vmin);
+  font-size: calc(10px + 2vmin);
   color: white;
 }
 
@@ -43,7 +44,7 @@ body {
 
 .inputContainer {
   margin-top: 45vh;
-  margin-left: 50vh;
+  margin-left: 36vw;
 }
 
 .restartBtn {
@@ -61,20 +62,46 @@ body {
 .mainDiv{
   width: 100vw;
   height: 100vh;
-  color: #EAD4A6;
+  background-color: #DAFFEF;
 }
 
 .canvasDiv {
   position: absolute;
 }
 
-.findMatchButton {
+.searchingText {
+  position: absolute;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 3.5rem;
+  text-align: center;
+  top: 5vh;
+  width: 100vw;
+}
 
+.findMatchButton {
+  width: 8vw;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 200;
+  font-family: 'Courier New', Courier, monospace;
+  color: white;
+  background-color: #272635;
+  margin-top: 30px;
+  height: 35px;
+  margin-left: 5.8vw;
+  box-shadow: 3px 3px 5px #27263550;
+}
+
+.findMatchButton:hover {
+  cursor: pointer;
+  box-shadow: 3px 3px 5px #272635cc;
 }
 
 .usernameLbl {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 3vw;
   position: absolute;
-  top: 5vh;
+  top: 6vh;
   left: 10vw;
 }
 
@@ -85,22 +112,54 @@ body {
 }
 
 .oppUsernameLbl {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 3vw;
   position: absolute;
-  top: 5vh;
+  top: 6vh;
   left: 60vw;
 }
 
 .usernamInput {
-  color: black;
-  background-color: white;
+  color: #272635;
   border: solid;
-  border-color: black;
-  border-width: 1px;
-  width: 30vw;
-  font-size: .8rem;
+  border-color: #272635;
+  border-radius: 13px;
+  border-width: 1.5px;
+  width: 20vw;
+  height: 30px;
+  font-size: 1.45rem;
+  text-align: left;
+  padding-left: 15px;
+  font-weight: 600;
+  background-color: #DAFFEF;
+  box-shadow: 3px 3px 5px #27263550;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-     body {background: white;}
+.mainDivider {
+  width: .1vw;
+  position: absolute;
+  left: 49.95vw;
+  top: 6vh;
+  height: 88vh;
+  z-index: 10;
+  background-color: #000;
+  color: black;
+}
+
+.usernamInput:hover {
+  width: 20.5vw;
+  height: 31px;
+  box-shadow: 4px 4px 5px #272635ab;
+}
+
+.usernamInput:focus {
+  width: 20.5vw;
+  height: 31px;
+  box-shadow: 4px 4px 5px #272635ab;
+}
+
+     body {background: #DAFFEF;}
         @keyframes rotate-loading {
             0%  {transform: rotate(0deg);-ms-transform: rotate(0deg); -webkit-transform: rotate(0deg); -o-transform: rotate(0deg); -moz-transform: rotate(0deg);}
             100% {transform: rotate(360deg);-ms-transform: rotate(360deg); -webkit-transform: rotate(360deg); -o-transform: rotate(360deg); -moz-transform: rotate(360deg);}
@@ -177,7 +236,7 @@ body {
         }
 
 
-        .loading-container { margin-left: 46vw; margin-top: 45vh;}
+        .loading-container { margin-left: 47.2vw; margin-top: 45vh;}
 
         .loading {
             border: 2px solid transparent;

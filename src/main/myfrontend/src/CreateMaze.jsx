@@ -16,10 +16,9 @@ export default class MazeCreater {
   //returns all maze nodes
   addAllMazeNodes() {
     const Scale = 35;
-    const LeftMargin = this.isSecond ? Math.floor(this.cw / 2) : 0;
+    const LeftMargin = this.isSecond ? Math.floor(this.cw / 2) + 15 : 15;
     var widthRatio = Math.min(this.cw / 2, this.ch);
     var currentColumn = 0;
-    this.scene.fillStyle = "#000000"
     var width = Math.ceil(widthRatio / Scale);
     var height = Math.ceil(widthRatio / Scale);
     this.mazeData.forEach(row => {
@@ -27,8 +26,8 @@ export default class MazeCreater {
       var currentRow = 0;
       row.forEach(node => {
         currentRow++;;
-        var x = (width) * currentColumn + Math.ceil(widthRatio / (Scale / 4)) + LeftMargin;
-        var y = (height) * currentRow + Math.ceil(widthRatio / (Scale / 4));
+        var x = (width) * currentColumn + Math.ceil(widthRatio / (Scale / 4.9)) + LeftMargin;
+        var y = (height) * currentRow + Math.ceil(widthRatio / (Scale / 4.9));
 
         if (node == 0) {
           this.mazeNodes.push([x, y, width, height])
@@ -41,14 +40,17 @@ export default class MazeCreater {
   //Draws maze onto canvas
   //(TODO allow customization of colors as param)
   createMaze() {
-    var randomColumn = Math.floor(Math.random() * 10) + 5;
-    var randomRow = Math.floor(Math.random() * 10) + 5;
+    var randomColumn = Math.floor(Math.random() * 5) + 2;
+    var randomRow = Math.floor(Math.random() * 5) + 1;
+    var finishRandomColumn = Math.floor(Math.random() * 5) + 15;
+    var finishRandomRow = Math.floor(Math.random() * 5) + 15;
     var spawnPoint = []
+    var finishPoint = []
     const Scale = 35;
-    const LeftMargin = this.isSecond ? Math.floor(this.cw / 2) : 0;
+    const LeftMargin = this.isSecond ? Math.floor(this.cw / 2) + 15: 15;
     var widthRatio = Math.min(this.cw / 2, this.ch);
     var currentColumn = 0;
-    this.scene.fillStyle = "#000000"
+    this.scene.fillStyle = "#001111"
     var width = Math.ceil(widthRatio / Scale);
     var height = Math.ceil(widthRatio / Scale);
     this.mazeData.forEach(row => {
@@ -56,20 +58,26 @@ export default class MazeCreater {
       var currentRow = 0;
       row.forEach(node => {
         currentRow++;;
-        var x = (width) * currentColumn + Math.ceil(widthRatio / (Scale / 4)) + LeftMargin;
-        var y = (height) * currentRow + Math.ceil(widthRatio / (Scale / 4));
+        var x = (width) * currentColumn + Math.ceil(widthRatio / (Scale / 4.9)) + LeftMargin;
+        var y = (height) * currentRow + Math.ceil(widthRatio / (Scale / 4.9));
         if(spawnPoint.length == 0 && currentColumn == randomColumn && currentRow > randomRow) {
           randomRow++
+        }
+        if(finishPoint.length == 0 && currentColumn == finishRandomColumn && currentRow > finishRandomRow) {
+          finishRandomRow++
         }
         if (node == 0) {
           this.scene.fillRect(x, y, width, height)
         } else {
           if(currentColumn == randomColumn && currentRow == randomRow) {
-            spawnPoint = [x,y, randomColumn, randomRow]
+            spawnPoint = [x,y]
+          }
+          if(currentColumn == finishRandomColumn && currentRow == finishRandomRow) {
+            finishPoint = [x,y]
           }
         }
       })
     })
-    return spawnPoint
+    return [spawnPoint[0], spawnPoint[1], finishPoint[0], finishPoint[1]]
   }
 }
