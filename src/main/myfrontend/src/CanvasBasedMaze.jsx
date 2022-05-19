@@ -13,7 +13,7 @@ import { useServerConnection } from "./useServerConnection.jsx"
 
 export default function CanvasBasedMaze(props) {
 
-  const [mazeData, oppID, myID, sendMove, playerValues, sendFinishPoint, finishValues, posSub, oppUsername, winnerFunc, winnerText, resetServer, getEndPoints, newEndPoints] = useServerConnection(props.username)
+  const [mazeData, oppID, myID, sendMove, playerValues, sendFinishPoint, finishValues, posSub, oppUsername, winnerFunc, winnerText, resetServer, getEndPoints, newEndPoints, resetUserName] = useServerConnection(props.username)
 
   const [sceneWidth, setSceneWidth] = useState(0)
   const [sceneHeight, setSceneHeight] = useState(0)
@@ -145,18 +145,34 @@ export default function CanvasBasedMaze(props) {
     keyPressed[e.key] = true;
 
     if (keyPressed['a'] || keyPressed['A']) {
+      if(oppGhost != null) {
+        oppGhost.clearPlayerSurroundings()
+        oppGhost.drawPlayer()
+      }
       player.movePlayerX(playerSpeed, -1)
       collisionMazeReset()
     }
     if (keyPressed['d'] || keyPressed['D']) {
+      if(oppGhost != null) {
+        oppGhost.clearPlayerSurroundings()
+        oppGhost.drawPlayer()
+      }
       player.movePlayerX(playerSpeed, 1)
       collisionMazeReset()
     }
     if (keyPressed['w'] || keyPressed['W']) {
+      if(oppGhost != null) {
+        oppGhost.clearPlayerSurroundings()
+        oppGhost.drawPlayer()
+      }
       player.movePlayerY(playerSpeed, -1)
       collisionMazeReset()
     }
     if (keyPressed['s'] || keyPressed['S']) {
+      if(oppGhost != null) {
+        oppGhost.clearPlayerSurroundings()
+        oppGhost.drawPlayer()
+      }
       player.movePlayerY(playerSpeed, 1)
       collisionMazeReset()
     }
@@ -232,7 +248,7 @@ export default function CanvasBasedMaze(props) {
     //const maze = new MazeCreateer(sceneContext, mazeData, cw, ch, true)
     setOppMaze(maze)
     setOpp(new Player(-100, -100, newCW / 2, newCW / 2, sceneContext, "#00ff44"))
-    setOppGhost(new Player(-100, -100, newCW / 2, newCW / 2, sceneContext, "#00ff4450"))
+    setOppGhost(new Player(-100, -100, newCW / 2, newCW / 2, sceneContext, "#00ff4465"))
     setOppEndPoint(new FinishPoint(-100, -100, newCW / 2, newCW / 2, "#800000", sceneContext))
   }
 
@@ -255,7 +271,15 @@ export default function CanvasBasedMaze(props) {
   }
 
   const changeUsername = () => {
-    restartGame()
+    setPlayer(null)
+    setOpp(null)
+    setEndPoint(null)
+    setOppEndPoint(null)
+    setMyMaze(null)
+    setOppMaze(null)
+    setCollisionHandler(null)
+    setGameOver(false)
+    resetUserName()
     props.resetUsername()
   }
 

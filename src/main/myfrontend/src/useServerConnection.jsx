@@ -179,6 +179,23 @@ export function useServerConnection(username) {
     onConnected()
   }
 
+  const resetUserName = () => {
+    setStompClient(null)
+    myID = null;
+    oppID = null;
+    setOID(null)
+    setCID(null)
+    setOppUsername(null)
+    setPlayerValues(null)
+    setFinishValues(null)
+    setMazeData(null);
+    setPositionSub(null);
+    setWinnerText(null);
+    sub1 = null;
+    sub2 = null;
+    sub3 = null;
+  }
+
   const getMyEndPoint = (x, y) => {
     console.log(cID)
     let obj = {
@@ -193,5 +210,5 @@ export function useServerConnection(username) {
     //stompClient.send('/app/private-message',{},JSON.stringify(obj))
   }
   
-  return [mazeData, oID, cID, sendMove, playerValues, sendFinish, finishValues, positionSub, oppUsername, sendWon, winnerText, resetNetValues, getMyEndPoint, endPoints];
+  return [mazeData, oID, cID, sendMove, playerValues, sendFinish, finishValues, positionSub, oppUsername, sendWon, winnerText, resetNetValues, getMyEndPoint, endPoints, resetUserName];
 }
